@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import Slider, { Settings } from "react-slick";
 import { motion } from "framer-motion";
 
-import { styled, Theme, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 
@@ -21,28 +21,30 @@ const RootStyle = styled("div")(() => ({
   overflow: "inherit",
 }));
 
-const StyledSlider = styled(Slider)(
-  ({ theme, padding }: { theme: Theme; padding: number }) => ({
-    display: "flex !important",
-    justifyContent: "center",
-    overflow: "initial !important",
-    "& > .slick-list": {
+const StyledSliderContainer = styled("div")<{ padding: number }>(
+  ({ theme, padding }) => ({
+    "& .slick-slider": {
+      display: "flex !important",
+      justifyContent: "center",
+      overflow: "initial !important",
+    },
+    "& .slick-slider > .slick-list": {
       overflow: "visible",
     },
     [theme.breakpoints.up("sm")]: {
-      "& > .slick-list": {
+      "& .slick-slider > .slick-list": {
         width: `calc(100% - ${2 * padding}px)`,
       },
-      "& .slick-list > .slick-track": {
+      "& .slick-slider .slick-list > .slick-track": {
         margin: "0px !important",
       },
-      "& .slick-list > .slick-track > .slick-current > div > .NetflixBox-root > .NetflixPaper-root:hover":
+      "& .slick-slider .slick-list > .slick-track > .slick-current > div > .NetflixBox-root > .NetflixPaper-root:hover":
         {
           transformOrigin: "0% 50% !important",
         },
     },
     [theme.breakpoints.down("sm")]: {
-      "& > .slick-list": {
+      "& .slick-slider > .slick-list": {
         width: `calc(100% - ${padding}px)`,
       },
     },
@@ -71,7 +73,6 @@ export default function SlickSlider({ data, genre }: SlickSliderProps) {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [showExplore, setShowExplore] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
-  const theme = useTheme();
 
   const beforeChange = async (currentIndex: number, nextIndex: number) => {
     if (currentIndex < nextIndex) {
@@ -185,18 +186,15 @@ export default function SlickSlider({ data, genre }: SlickSliderProps) {
               onPrevious={handlePrevious}
               activeSlideIndex={activeSlideIndex}
             >
-              <StyledSlider
-                ref={sliderRef}
-                {...settings}
-                padding={ARROW_MAX_WIDTH}
-                theme={theme}
-              >
-                {data.results
-                  .filter((i) => !!i.backdrop_path)
-                  .map((item) => (
-                    <SlideItem key={item.id} item={item} />
-                  ))}
-              </StyledSlider>
+              <StyledSliderContainer padding={ARROW_MAX_WIDTH}>
+                <Slider ref={sliderRef} {...settings}>
+                  {data.results
+                    .filter((i) => !!i.backdrop_path)
+                    .map((item) => (
+                      <SlideItem key={item.id} item={item} />
+                    ))}
+                </Slider>
+              </StyledSliderContainer>
             </CustomNavigation>
           </RootStyle>
         </>
