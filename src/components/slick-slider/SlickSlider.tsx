@@ -74,6 +74,9 @@ export default function SlickSlider({ data, genre }: SlickSliderProps) {
   const [showExplore, setShowExplore] = useState(false);
   const [isEnd, setIsEnd] = useState(false);
 
+  // Type assertion to work around react-slick type incompatibility with React 18
+  const SliderComponent = Slider as any;
+
   const beforeChange = async (currentIndex: number, nextIndex: number) => {
     if (currentIndex < nextIndex) {
       setActiveSlideIndex(nextIndex);
@@ -187,13 +190,13 @@ export default function SlickSlider({ data, genre }: SlickSliderProps) {
               activeSlideIndex={activeSlideIndex}
             >
               <StyledSliderContainer padding={ARROW_MAX_WIDTH}>
-                <Slider ref={sliderRef} {...settings}>
+                <SliderComponent ref={sliderRef} {...settings}>
                   {data.results
                     .filter((i) => !!i.backdrop_path)
                     .map((item) => (
                       <SlideItem key={item.id} item={item} />
                     ))}
-                </Slider>
+                </SliderComponent>
               </StyledSliderContainer>
             </CustomNavigation>
           </RootStyle>
